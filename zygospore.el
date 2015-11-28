@@ -42,6 +42,15 @@
 (defvar zygospore-last-full-frame-buffer
   nil
   "Last buffer that was full-frame'd.")
+  
+(defvar zygospore-last-cursor-position 
+  nil
+  "Position of cursor when `zygospore-delete-other-windows' was called.")
+  
+(defcustom zygospore-save-point
+  t
+  "Whether cursor position should be restored with window config."
+  :type 'boolean)
 
 (defun zygospore-delete-other-window ()
   "Save current window-buffer configuration and full-frame the current buffer."
@@ -52,7 +61,10 @@
 
 (defun zygospore-restore-other-windows ()
   "Restore the window configuration to prior to full-framing."
-  (jump-to-register zygospore-spore-formation-register-name))
+  (setq zygospore-last-cursor-position (point))
+  (jump-to-register zygospore-spore-formation-register-name)
+  (unless zygospore-save-point
+      (goto-char zygospore-last-cursor-position)))
 
 ;;;###autoload
 (defun zygospore-toggle-delete-other-windows ()
